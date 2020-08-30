@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -31,10 +30,9 @@ namespace WebAPI.Controllers
 
         }
         [HttpPost,DisableRequestSizeLimit]
-        
         public async Task<IActionResult> Upload()
         {
-            
+           
 
             string folderName;
             string pathToSave;
@@ -45,15 +43,11 @@ namespace WebAPI.Controllers
                 var file = Request.Form.Files;
                 if (file.Count == 0)
                 {
-                
-                    folderName = Path.Combine("Resources", "Upload");
-                    pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
-                    fileName = "default-profile-picture1.jpg";
-                    fullPath = Path.Combine(pathToSave, fileName);
-                    dbPath = Path.Combine(folderName, fileName);
-                    return Ok(new { dbPath });
-                
-
+                 string userId = User.Claims.First(c => c.Type == "UserID").Value;
+            var user = await _userManager.FindByIdAsync(userId);
+               
+                    dbPath = user.Image;
+                    return Ok(new { dbPath});
                 
                 
 
